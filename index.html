@@ -78,7 +78,7 @@
             overflow: hidden;
         }
 
-        /* --- Glass Heart Physics Object --- */
+        /* --- Glass Heart Object --- */
         #heartWrapper {
             position: absolute;
             width: 120px;
@@ -86,7 +86,7 @@
             z-index: 6;
             transform: translate(-50%, -50%);
             will-change: left, top;
-            display: none; /* Hidden until Screen 2 activates */
+            display: none;
         }
 
         .diamond-heart {
@@ -132,7 +132,7 @@
             pointer-events: none;
         }
 
-        /* --- Fracture Particles --- */
+        /* --- Shatter Particles --- */
         .mini-heart-particle {
             position: absolute;
             color: #ff0033;
@@ -173,7 +173,7 @@
             text-shadow: 0 0 10px #ff0033;
         }
 
-        /* --- Engine Layout Keyframes --- */
+        /* --- Keyframes --- */
         @keyframes rapidPulse {
             0% { transform: rotate(-45deg) scale(0.93); filter: brightness(0.9); }
             10% { transform: rotate(-45deg) scale(1.12); filter: brightness(1.3); }
@@ -211,7 +211,7 @@
         <button onclick="advanceToNextScreen()">CONTINUE</button>
     </div>
 
-    <!-- Screen 2: Gravity Sensor Playground -->
+    <!-- Screen 2: Interaction Playground -->
     <div id="screen2" class="screen">
         <div id="heartWrapper">
             <div id="glassHeart" class="diamond-heart">
@@ -229,40 +229,39 @@
     </div>
 
     <script>
-        // Generate the background decoration text right away
         const bg = document.getElementById('bgStream');
         let bgText = "";
         for(let i=0; i<4000; i++) { bgText += "iloveyoumoncher "; }
         bg.innerText = bgText;
 
-        // Clean transition logic that skips permission blocks if a device rejects them
         function advanceToNextScreen() {
-            const s1 = document.getElementById('screen1');
-            const s2 = document.getElementById('screen2');
-            
-            s1.classList.remove('active-screen');
-            s2.classList.add('active-screen');
-            
-            // Un-hide physics block layout
+            document.getElementById('screen1').classList.remove('active-screen');
+            document.getElementById('screen2').classList.add('active-screen');
             document.getElementById('heartWrapper').style.display = 'block';
             
-            // Try to boot up orientation sensor data safely
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(() => { initTiltPhysicsHeart(); })
-                    .catch(() => { initTiltPhysicsHeart(); }); // Fallback on failure
-            } else {
-                initTiltPhysicsHeart();
-            }
+            initInteractionHeart();
         }
 
-        function initTiltPhysicsHeart() {
+        function initInteractionHeart() {
             const container = document.getElementById('heartWrapper');
+            const glassHeart = document.getElementById('glassHeart');
+            
+            let x = window.innerWidth / 2;
+            let y = window.innerHeight / 2;
+            let vx = 0;
+            let vy = 0;
 
+            const radius = 70; 
+            let hitCount = 0;
+            const maxHits = 4; 
+            let isShattered = false;
 
-    
+            container.style.left = x + 'px';
+            container.style.top = y + 'px';
 
+            // Handles thumb/finger swipes on phones AND mouse drag on laptops seamlessly
+            function applyFlingForce(clientX, clientY) {
+                if (isShattered) return;
+                // Calculates the distance from the center of the screen to your finger/mouse
+                const forceX = (clientX - window.innerWidth / 2) * 0.08;
 
-
-           
-             
