@@ -208,7 +208,7 @@
     <!-- Screen 1: Happy Birthday Launch Gate -->
     <div id="screen1" class="screen active-screen">
         <h1>happy birthday mon cher &lt;3</h1>
-        <button onclick="advanceToNextScreen()">CONTINUE</button>
+        <button id="nextBtn">CONTINUE</button>
     </div>
 
     <!-- Screen 2: Interaction Playground -->
@@ -229,18 +229,20 @@
     </div>
 
     <script>
+        // Background creation
         const bg = document.getElementById('bgStream');
         let bgText = "";
         for(let i=0; i<4000; i++) { bgText += "iloveyoumoncher "; }
         bg.innerText = bgText;
 
-        function advanceToNextScreen() {
+        // Bulletproof Event Listener for the button
+        document.getElementById('nextBtn').addEventListener('click', function() {
             document.getElementById('screen1').classList.remove('active-screen');
             document.getElementById('screen2').classList.add('active-screen');
             document.getElementById('heartWrapper').style.display = 'block';
             
             initInteractionHeart();
-        }
+        });
 
         function initInteractionHeart() {
             const container = document.getElementById('heartWrapper');
@@ -259,9 +261,9 @@
             container.style.left = x + 'px';
             container.style.top = y + 'px';
 
-            // Handles thumb/finger swipes on phones AND mouse drag on laptops seamlessly
             function applyFlingForce(clientX, clientY) {
                 if (isShattered) return;
-                // Calculates the distance from the center of the screen to your finger/mouse
                 const forceX = (clientX - window.innerWidth / 2) * 0.08;
+                const forceY = (clientY - window.innerHeight / 2) * 0.08;
+                vx += forceX;
 
