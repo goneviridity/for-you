@@ -86,6 +86,7 @@
             z-index: 6;
             transform: translate(-50%, -50%);
             will-change: left, top;
+            display: none; /* Hidden until Screen 2 activates */
         }
 
         .diamond-heart {
@@ -207,7 +208,7 @@
     <!-- Screen 1: Happy Birthday Launch Gate -->
     <div id="screen1" class="screen active-screen">
         <h1>happy birthday mon cher &lt;3</h1>
-        <button onclick="startMobileExperience()">CONTINUE</button>
+        <button onclick="advanceToNextScreen()">CONTINUE</button>
     </div>
 
     <!-- Screen 2: Gravity Sensor Playground -->
@@ -228,39 +229,40 @@
     </div>
 
     <script>
+        // Generate the background decoration text right away
         const bg = document.getElementById('bgStream');
         let bgText = "";
         for(let i=0; i<4000; i++) { bgText += "iloveyoumoncher "; }
         bg.innerText = bgText;
 
-        function startMobileExperience() {
+        // Clean transition logic that skips permission blocks if a device rejects them
+        function advanceToNextScreen() {
+            const s1 = document.getElementById('screen1');
+            const s2 = document.getElementById('screen2');
+            
+            s1.classList.remove('active-screen');
+            s2.classList.add('active-screen');
+            
+            // Un-hide physics block layout
+            document.getElementById('heartWrapper').style.display = 'block';
+            
+            // Try to boot up orientation sensor data safely
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            goToScreen(2);
-                        } else {
-                            alert("Please grant device movement data permissions to throw the heart around!");
-                            goToScreen(2);
-                        }
-                    })
-                    .catch(console.error);
+                    .then(() => { initTiltPhysicsHeart(); })
+                    .catch(() => { initTiltPhysicsHeart(); }); // Fallback on failure
             } else {
-                goToScreen(2);
-            }
-        }
-
-        function goToScreen(screenNumber) {
-            const screens = document.querySelectorAll('.screen');
-            screens.forEach(screen => screen.classList.remove('active-screen'));
-
-            const nextScreen = document.getElementById('screen' + screenNumber);
-            if (nextScreen) {
-                nextScreen.classList.add('active-screen');
-                if (screenNumber === 2) {
-                    initTiltPhysicsHeart();
-                }
+                initTiltPhysicsHeart();
             }
         }
 
         function initTiltPhysicsHeart() {
+            const container = document.getElementById('heartWrapper');
+
+
+    
+
+
+
+           
+             
